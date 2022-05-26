@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.template.defaultfilters import slugify
 from django.db.models import Q
+from decimal import Decimal
+from Production.models import Production
 
 
 def get_user_name(self):
@@ -101,6 +103,23 @@ class Profile(models.Model):
 
         super(Profile, self).save(*args, **kwargs)
 
+    def prime(self, start_date, end_date):
+        productions = Production.objects.filter(process_type ="FINISHED_PRODUCT")
+        productions = productions.filter(date__gte = start_date)
+        productions = productions.filter(date__lte = end_date)
+        productions = productions.filter(user = self.user) | productions.filter(user2 = self.user) | productions.filter(user3 = self.user)
+
+        total = 0
+
+        for p in productions:
+            if p.user is not None and p.user2 is None and p.user3 is None:
+                total += ((Decimal(p.product.bag_roll) * Decimal(p.product.roll_package) * p.quantity_produced)/2500)*20
+            elif p.user is not None and p.user2 is not None and p.user3 is None:
+                total += (((Decimal(p.product.bag_roll) * Decimal(p.product.roll_package) * p.quantity_produced)/2500)*20)/2
+            elif p.user is not None and p.user2 is not None and p.user3 is not None:
+                total += (((Decimal(p.product.bag_roll) * Decimal(p.product.roll_package) * p.quantity_produced)/2500)*20)/3
+        return total
+    
     def extrusion_number(self, start_date, end_date):
         coils = self.user.maker.exclude(status = "CUT").filter(Q(creation_date__lte = end_date) & Q(creation_date__gte = start_date))
         total = coils.count()

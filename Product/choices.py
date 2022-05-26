@@ -7,6 +7,7 @@ PRINT_CHOICES = (
     ("Q&P", "Qualité/Prix"),
     ("THANKS", "Thanks"),
     ("BEST_OF_SHOPPING", "Best Of Shopping"),
+    ("BEST_OF_SHOPPING_NEW", "Best Of Shopping *NEW*"),
     ("BIG_SHOP", "Big Shop"),
     ("THANK_YOU", "Thank You"),
     ("FAMILY_STORE", "Family Store"),
@@ -36,6 +37,7 @@ SIZE = (
     ("MEDIUM","25 Moyen Modèle"),
     ("MEDIUM","26 Moyen Modèle"),
     ("BIG","30 Grand Modèle"),
+    ("36_BIG","36 Grand Modèle"),
     ("KOROZO_BIG","39 Grand Modèle"),
     ("GGM","42 Grand Modèle +"),
 )

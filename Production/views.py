@@ -205,6 +205,18 @@ def filter_printing(request):
     return qs
 #
 
+def filter_bonus(request):
+    qs = Profile.objects.filter(job_position__name = "Opérateur Façonnage")
+
+    date_min = request.GET.get('date_min')
+    date_max = request.GET.get('date_max')
+    
+    if is_valid_queryparam(date_min) and is_valid_queryparam(date_max):
+        for i in range(qs.__len__()):
+            qs[i].calculated_bonus = qs[i].prime(date_min, date_max)
+
+    return qs
+
 def filter_extrusion(request):
     qs = Production.objects.filter(process_type = "EXTRUSION")
 
@@ -1101,6 +1113,20 @@ class ConsultingFinishedProductListView(ListView):
             'total_amount': total_amount,
         }
         return render(self.request, 'production/finished_product_consulting.html', context)
+
+class ConsultingBonusListView(ListView):
+
+    template_name = 'production/bonus_consulting.html'
+
+    # def get_queryset(self):
+    #     qs = filter_finished_product(self.request)
+    #     return qs
+    def get(self, request, *arg, **kwargs):
+        qs = filter_bonus(self.request)
+        context = {
+            'object_list': qs,
+        }
+        return render(self.request, 'production/bonus_consulting.html', context)
 
 class ConsultingCoilListView(ListView):
 
